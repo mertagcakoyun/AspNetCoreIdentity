@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Medyasoft Digital\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Medyasoft Digital\\.nuget\\packages",
+      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+    ]
+  }
+}
