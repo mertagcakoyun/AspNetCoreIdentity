@@ -15,11 +15,12 @@ namespace IdentityProject.Controllers
         //Dependency Inversion Sağlanması
         // User Manager örneği üzerinden ilgili classın constructor'ında _userManager ı görünce user managerin örneğini fırlatacak
         // startupta identity yi programa eklediğimiz için halihazırda identity frameworkün içindeki container aracılığıyla örnekleme işlemini yapar.
-        
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-        public HomeController(UserManager<AppUser> userManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -28,33 +29,41 @@ namespace IdentityProject.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignIn(SignInViewModel model)
+        public async Task<IActionResult> SignIn(SignInViewModel model)
         {
             if (ModelState.IsValid)
             {
-                
+              var identityResult =  await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                if (identityResult.Succeeded)
+                {
+                    return RedirectToAction("Index", "Panel");
+
+                }
+                ModelState.AddModelError("", "Username or Password is Incorrect");
             }
-            return View("Index" , model);
+          
+            return View("Index", model);
         }
 
-    public IActionResult SignUp()
+        public IActionResult SignUp()
         {
 
             return View(new SignUpViewModel());
         }
 
         [HttpPost]
-        public async Task< IActionResult> SignUp(SignUpViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
             if (ModelState.IsValid)
             {
-                AppUser user = new AppUser {
+                AppUser user = new AppUser
+                {
                     Name = model.Name,
-                    Surname=model.Surname,
-                    UserName=model.UserName,
+                    Surname = model.Surname,
+                    UserName = model.UserName,
                     Email = model.Email
-            };
-                var result= await _userManager.CreateAsync(user,model.Password);
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");

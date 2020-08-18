@@ -19,7 +19,7 @@ namespace IdentityProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ProjectContext>();
-            services.AddIdentity<AppUser, AppRole>(opt=> {
+            services.AddIdentity<AppUser, AppRole>(opt => {
                 opt.Password.RequireDigit = false;
                 opt.Password.RequireLowercase = false;
                 opt.Password.RequiredLength = 3;
@@ -27,7 +27,18 @@ namespace IdentityProject
                 opt.Password.RequireNonAlphanumeric = false;
 
             }).AddEntityFrameworkStores<ProjectContext>();
+          
+            services.ConfigureApplicationCookie(opt => {
+                opt.Cookie.HttpOnly = true;
+                opt.Cookie.Name = "IdentityCookie";
+                opt.Cookie.SameSite = SameSiteMode.Strict;
+                opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; //HTTP or HTTPS
+                opt.ExpireTimeSpan = TimeSpan.FromDays(20);
+                
+                });
+            
             services.AddControllersWithViews();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
