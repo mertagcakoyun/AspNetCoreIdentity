@@ -12,22 +12,39 @@ namespace IdentityProject.Controllers
 {
     public class HomeController : Controller
     {
+        //Dependency Inversion Sağlanması
+        // User Manager örneği üzerinden ilgili classın constructor'ında _userManager ı görünce user managerin örneğini fırlatacak
+        // startupta identity yi programa eklediğimiz için halihazırda identity frameworkün içindeki container aracılığıyla örnekleme işlemini yapar.
+        
         private readonly UserManager<AppUser> _userManager;
         public HomeController(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
         }
+
         public IActionResult Index()
         {
             return View(new SignInViewModel());
         }
-        public IActionResult SignUp()
+
+        [HttpPost]
+        public IActionResult SignIn(SignInViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+            }
+            return View("Index" , model);
+        }
+
+    public IActionResult SignUp()
         {
 
             return View(new SignUpViewModel());
         }
+
         [HttpPost]
-        public async Task< IActionResult> KayıtOl(SignUpViewModel model)
+        public async Task< IActionResult> SignUp(SignUpViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -47,7 +64,7 @@ namespace IdentityProject.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
             }
-            return View();
+            return View("Index");
         }
     }
 }
